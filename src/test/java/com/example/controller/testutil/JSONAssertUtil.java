@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import org.skyscreamer.jsonassert.JSONCompare;
 import org.skyscreamer.jsonassert.JSONCompareResult;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 
 public class JSONAssertUtil {
