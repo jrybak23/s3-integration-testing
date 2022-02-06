@@ -2,11 +2,14 @@ package com.example.controller.testutil;
 
 import lombok.SneakyThrows;
 
-import java.io.InputStream;
+import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.*;
+import java.util.Objects;
 
 import static java.lang.Thread.currentThread;
 import static java.time.ZoneId.systemDefault;
@@ -14,8 +17,19 @@ import static org.mockito.Mockito.doReturn;
 
 public class TestUtil {
 
-    public static InputStream getResourceAsStream(String filePath) {
-        return getClassLoader().getResourceAsStream(filePath);
+    /**
+     * @return file located in the test classpath.
+     */
+    public static File getClasspathFile(String classpath) {
+        URL fileURL = getClassLoader().getResource(classpath);
+        if (fileURL == null) {
+            throw new RuntimeException("File " + classpath + " is not found in the test classpath.");
+        }
+        try {
+            return new File(fileURL.toURI());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @SneakyThrows
@@ -29,7 +43,7 @@ public class TestUtil {
     }
 
     /**
-     * @param clock to mock
+     * @param clock    to mock
      * @param dateTime to return when current time is obtained from java.time.LocalDateTime#now(java.time.Clock)
      *                 or any other similar factory methods.
      */
@@ -42,6 +56,7 @@ public class TestUtil {
 
     /**
      * see {@link TestUtil#mockClockToReturnDateTime(Clock, LocalDateTime)}
+     *
      * @param date
      */
     public static void mockClockToReturnDate(Clock clock, LocalDate date) {

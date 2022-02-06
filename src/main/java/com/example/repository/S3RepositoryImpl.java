@@ -1,11 +1,13 @@
 package com.example.repository;
 
 import lombok.extern.slf4j.Slf4j;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.io.File;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -29,6 +31,15 @@ public class S3RepositoryImpl implements S3Repository {
         } catch (BucketAlreadyExistsException e) {
           log.info("The bucket " + BUCKET_NAME + " was n't created as it's already exists.");
         }
+    }
+
+    @Override
+    public void putObject(String objectKey, File objectContent) {
+        PutObjectRequest request = PutObjectRequest.builder()
+                .key(objectKey)
+                .bucket(BUCKET_NAME)
+                .build();
+        s3Client.putObject(request, RequestBody.fromFile(objectContent));
     }
 
     @Override
