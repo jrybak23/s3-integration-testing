@@ -14,4 +14,6 @@ public interface S3Repository {
     void putObject(String objectKey, InputStream data, String mimeType);
 
     Long getObjectSize(String objectName);
+
+    void deleteAllObjects();
 }

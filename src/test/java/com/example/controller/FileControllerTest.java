@@ -5,6 +5,7 @@ import com.example.dto.FormData;
 import com.example.repository.S3Repository;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -32,8 +33,13 @@ class FileControllerTest {
     S3Repository s3Repository;
 
     @BeforeEach
-    public void beforeAll() {
+    public void beforeEach() {
         s3Repository.createBucketIfNotExists();
+    }
+
+    @AfterEach
+    void afterEach() {
+        s3Repository.deleteAllObjects();
     }
 
     /**
@@ -41,8 +47,8 @@ class FileControllerTest {
      */
     @Test
     void testListFiles() {
-        s3Repository.putObject("1.jpg", getClasspathFile("images/photo1.jpg"));
-        s3Repository.putObject("2.jpg", getClasspathFile("images/photo2.jpg"));
+        s3Repository.putObject("1.jpg", getClasspathFile("test/files/photo1.jpg"));
+        s3Repository.putObject("2.jpg", getClasspathFile("test/files/photo2.jpg"));
 
         given()
                 .when().get("/files")
@@ -74,7 +80,7 @@ class FileControllerTest {
     }
 
     public static Stream<Arguments> listTestFiles() {
-        File directory = getClasspathFile("test.files");
+        File directory = getClasspathFile("test/files");
         File[] testFiles = requireNonNull(directory.listFiles(), "Test files dir is empty.");
         return Arrays.stream(testFiles)
                 .map(Arguments::arguments);

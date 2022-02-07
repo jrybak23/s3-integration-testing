@@ -116,4 +116,31 @@ public class S3RepositoryImpl implements S3Repository {
         HeadObjectResponse response = s3Client.headObject(request);
         return response.contentLength();
     }
+
+    @Override
+    public void deleteAllObjects() {
+        List<String> allObjectKeys = listObjects();
+        if (!allObjectKeys.isEmpty()) {
+            DeleteObjectsRequest request = DeleteObjectsRequest.builder()
+                    .bucket(BUCKET_NAME)
+                    .delete(createDeleteObjectsOperation(allObjectKeys))
+                    .build();
+            s3Client.deleteObjects(request);
+        }
+    }
+
+    private Delete createDeleteObjectsOperation(List<String> objectKeys) {
+        List<ObjectIdentifier> objects = objectKeys.stream()
+                .map(this::createObjectIdentifier)
+                .collect(toList());
+        return Delete.builder()
+                .objects(objects)
+                .build();
+    }
+
+    private ObjectIdentifier createObjectIdentifier(String objectKey) {
+        return ObjectIdentifier.builder()
+                .key(objectKey)
+                .build();
+    }
 }
