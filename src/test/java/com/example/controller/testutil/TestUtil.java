@@ -3,6 +3,7 @@ package com.example.controller.testutil;
 import lombok.SneakyThrows;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -61,6 +62,14 @@ public class TestUtil {
      */
     public static void mockClockToReturnDate(Clock clock, LocalDate date) {
         mockClockToReturnDateTime(clock, date.atStartOfDay());
+    }
+
+    public static String determineContentType(File file) {
+        try {
+            return Files.probeContentType(file.toPath());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private TestUtil() {

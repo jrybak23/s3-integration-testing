@@ -7,10 +7,10 @@ import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
+import static javax.ws.rs.core.MediaType.*;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
 @Path("/files")
@@ -20,7 +20,7 @@ public class FileController {
     S3Repository s3Repository;
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(APPLICATION_JSON)
     public Response listFiles() {
         List<String> files = s3Repository.listObjects();
         return Response.ok(files)
@@ -29,7 +29,6 @@ public class FileController {
 
     @GET
     @Path("/{objectKey}")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadFile(@PathParam("objectKey") String objectKey) {
         return s3Repository.downloadObject(objectKey)
                 .map(this::createOkDownloadResponse)
@@ -43,11 +42,12 @@ public class FileController {
 
     private Response createNotFoundResponse(String objectKey) {
         return Response.status(NOT_FOUND).entity("Requested object " + objectKey + " is not found.")
+                .type(TEXT_PLAIN)
                 .build();
     }
 
     @POST
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Consumes(MULTIPART_FORM_DATA)
     public Response uploadFile(@MultipartForm FormData formData) {
         s3Repository.uploadObject(formData.fileName, formData.data, formData.mimeType);
         return Response.ok("File uploaded.")
