@@ -1,5 +1,15 @@
-# s3-integration-testing Project
+# AWS S3 integration testing
 
+Example of S3 testing setup using Java, LocalStack and Testcontainers.
+
+Click to navigate to:
+- [The testing class](https://github.com/jrybak23/s3-integration-testing/blob/master/src/test/java/com/example/controller/FileControllerTest.java)
+- [The controller class](https://github.com/jrybak23/s3-integration-testing/blob/master/src/main/java/com/example/controller/FileController.java)
+- [S3 repository implementation](https://github.com/jrybak23/s3-integration-testing/blob/master/src/main/java/com/example/repository/S3RepositoryImpl.java)
+- [S3 multipart upload implementation](https://github.com/jrybak23/s3-integration-testing/blob/master/src/main/java/com/example/repository/S3MultipartUploader.java)
+- [S3 test provisioning](https://github.com/jrybak23/s3-integration-testing/blob/master/src/test/java/com/example/controller/testconfig/S3Resource.java)
+
+---------------------------------------------------------------------------------
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
