@@ -5,10 +5,7 @@ import com.example.repository.S3Repository;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -20,6 +17,7 @@ public class FileController {
     S3Repository s3Repository;
 
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     public Response listFiles() {
         List<String> files = s3Repository.listObjects();
         return Response.ok(files)
