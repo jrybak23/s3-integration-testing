@@ -47,8 +47,8 @@ class FileControllerTest {
      */
     @Test
     void testListFiles() {
-        s3Repository.putObject("1.jpg", getClasspathFile("test/files/photo1.jpg"));
-        s3Repository.putObject("2.jpg", getClasspathFile("test/files/photo2.jpg"));
+        s3Repository.uploadObject("1.jpg", getClasspathFile("test/files/photo1.jpg"));
+        s3Repository.uploadObject("2.jpg", getClasspathFile("test/files/photo2.jpg"));
 
         given()
                 .when().get("/files")

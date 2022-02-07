@@ -7,11 +7,11 @@ import java.util.List;
 public interface S3Repository {
     void createBucketIfNotExists();
 
-    void putObject(String objectKey, File objectContent);
+    void uploadObject(String objectKey, File objectContent);
+
+    void uploadObject(String objectKey, InputStream data, String mimeType);
 
     List<String> listObjects();
-
-    void putObject(String objectKey, InputStream data, String mimeType);
 
     Long getObjectSize(String objectName);
 

@@ -29,7 +29,7 @@ public class FileController {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response uploadFile(@MultipartForm FormData formData) {
-        s3Repository.putObject(formData.fileName, formData.data, formData.mimeType);
+        s3Repository.uploadObject(formData.fileName, formData.data, formData.mimeType);
         return Response.ok("File uploaded.")
                 .build();
     }
