@@ -1,6 +1,7 @@
 package com.example.repository;
 
 import lombok.extern.slf4j.Slf4j;
+import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
@@ -61,6 +62,15 @@ public class S3RepositoryImpl implements S3Repository {
         return response.contents().stream()
                 .map(S3Object::key)
                 .collect(toList());
+    }
+
+    @Override
+    public ResponseInputStream<GetObjectResponse> downloadObject(String objectKey) {
+        GetObjectRequest request = GetObjectRequest.builder()
+                .bucket(BUCKET_NAME)
+                .key(objectKey)
+                .build();
+        return s3Client.getObject(request);
     }
 
     @Override

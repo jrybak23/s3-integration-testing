@@ -15,6 +15,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.stream.Stream;
@@ -75,8 +76,27 @@ class FileControllerTest {
                 .statusCode(200);
 
         long objectSize = s3Repository.getObjectSize(objectKey);
-        long expectedFileSize = Files.size(file.toPath());
-        assertEquals(expectedFileSize, objectSize, "The file " + file.getName() + " is not uploaded correctly.");
+        assertEquals(getExpectedFileSize(file), objectSize, "The file " + file.getName() + " is not uploaded correctly.");
+    }
+
+    /**
+     * test for {@link FileController#downloadFile(String)}
+     */
+    @ParameterizedTest
+    @MethodSource("listTestFiles")
+    void testDownloadFile(File file) throws IOException {
+        String objectKey = "test-download-" + file.getName();
+        s3Repository.uploadObject(objectKey, file);
+        InputStream response = given()
+                .when().get("/files/" + objectKey)
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .asInputStream();
+
+        byte[] bytes = response.readAllBytes();
+        assertEquals(getExpectedFileSize(file), bytes.length);
     }
 
     public static Stream<Arguments> listTestFiles() {
@@ -84,5 +104,9 @@ class FileControllerTest {
         File[] testFiles = requireNonNull(directory.listFiles(), "Test files dir is empty.");
         return Arrays.stream(testFiles)
                 .map(Arguments::arguments);
+    }
+
+    private long getExpectedFileSize(File file) throws IOException {
+        return Files.size(file.toPath());
     }
 }
