@@ -1,17 +1,17 @@
 package com.example.controller;
 
+import com.example.dto.DownloadObjectResponse;
 import com.example.dto.FormData;
 import com.example.repository.S3Repository;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
-import software.amazon.awssdk.core.ResponseInputStream;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
 import java.util.List;
+
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
 @Path("/files")
 public class FileController {
@@ -31,10 +31,18 @@ public class FileController {
     @Path("/{objectKey}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadFile(@PathParam("objectKey") String objectKey) {
-        ResponseInputStream<GetObjectResponse> inputStream = s3Repository.downloadObject(objectKey);
-        GetObjectResponse response = inputStream.response();
-        StreamingOutput responseBody = inputStream::transferTo;
-        return Response.ok(responseBody, response.contentType())
+        return s3Repository.downloadObject(objectKey)
+                .map(this::createOkDownloadResponse)
+                .orElseGet(() -> createNotFoundResponse(objectKey));
+    }
+
+    private Response createOkDownloadResponse(DownloadObjectResponse response) {
+        return Response.ok(response.getStreamingOutput(), response.getContentType())
+                .build();
+    }
+
+    private Response createNotFoundResponse(String objectKey) {
+        return Response.status(NOT_FOUND).entity("Requested object " + objectKey + " is not found.")
                 .build();
     }
 

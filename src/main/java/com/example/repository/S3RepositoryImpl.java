@@ -1,5 +1,6 @@
 package com.example.repository;
 
+import com.example.dto.DownloadObjectResponse;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -11,6 +12,7 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -65,12 +67,20 @@ public class S3RepositoryImpl implements S3Repository {
     }
 
     @Override
-    public ResponseInputStream<GetObjectResponse> downloadObject(String objectKey) {
+    public Optional<DownloadObjectResponse> downloadObject(String objectKey) {
         GetObjectRequest request = GetObjectRequest.builder()
                 .bucket(BUCKET_NAME)
                 .key(objectKey)
                 .build();
-        return s3Client.getObject(request);
+        ResponseInputStream<GetObjectResponse> response;
+        try {
+            response = s3Client.getObject(request);
+        } catch (NoSuchKeyException e) {
+            return Optional.empty();
+        }
+
+        String contentType = response.response().contentType();
+        return Optional.of(new DownloadObjectResponse(response, contentType));
     }
 
     @Override

@@ -1,11 +1,11 @@
 package com.example.repository;
 
-import software.amazon.awssdk.core.ResponseInputStream;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import com.example.dto.DownloadObjectResponse;
 
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 
 public interface S3Repository {
     void createBucketIfNotExists();
@@ -16,7 +16,7 @@ public interface S3Repository {
 
     List<String> listObjects();
 
-    ResponseInputStream<GetObjectResponse> downloadObject(String objectKey);
+    Optional<DownloadObjectResponse> downloadObject(String objectKey);
 
     Long getObjectSize(String objectName);
 

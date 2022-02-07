@@ -24,6 +24,7 @@ import static com.example.controller.testutil.JSONMatchers.matchesJSON;
 import static com.example.controller.testutil.TestUtil.getClasspathFile;
 import static io.restassured.RestAssured.given;
 import static java.util.Objects.requireNonNull;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTestResource(value = S3Resource.class)
@@ -108,5 +109,15 @@ class FileControllerTest {
 
     private long getExpectedFileSize(File file) throws IOException {
         return Files.size(file.toPath());
+    }
+
+    @Test
+    void testDownloadNotExistingFile() {
+        String objectKey = "not-found.jpg";
+        given()
+                .when().get("/files/" + objectKey)
+                .then()
+                .statusCode(404)
+                .body(is("Requested object not-found.jpg is not found."));
     }
 }
