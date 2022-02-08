@@ -2,6 +2,8 @@
 
 Example of S3 testing setup using Java, LocalStack and Testcontainers.
 
+**Read [the related article https://www.devguidance.com/posts/s3-java-integration-test/](https://www.devguidance.com/posts/s3-java-integration-test/)**
+
 Click to navigate to:
 - [The testing class](https://github.com/jrybak23/s3-integration-testing/blob/master/src/test/java/com/example/controller/FileControllerTest.java)
 - [The controller class](https://github.com/jrybak23/s3-integration-testing/blob/master/src/main/java/com/example/controller/FileController.java)
